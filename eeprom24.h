@@ -64,5 +64,22 @@ public:
 };
 
 
+/** 24x08 memories; size = 1 kB; page size = 16 B.
+ *
+ */
+class Eeprom24_512: public Eeprom24
+{
+public:
+	Eeprom24_512(I2C_HandleTypeDef* i2c, uint8_t address = DEFAULT_ADDRESS): Eeprom24(i2c, address, 1023, 16) {};
+	Eeprom24_512(I2C_HandleTypeDef* i2c, bool A0, bool A1, bool A2): Eeprom24(i2c, DEFAULT_ADDRESS | (A0) | (A1 << 1) | (A2 << 2), 1023, 16) {};
+
+	bool writeByte(uint16_t address, uint8_t data) {return writeByte_internal(m_i2c_address, address, data);};
+	uint8_t readByte(uint16_t address) {return readByte_internal(m_i2c_address, address);};
+
+	bool writePage(uint16_t address, uint8_t* data, uint16_t length) {return writePage_internal(m_i2c_address, address, data, length);};
+	bool readPage(uint16_t address, uint8_t* data, uint16_t length) {return readPage_internal(m_i2c_address, address, data, length);};
+};
+
+
 
 #endif /* EEPROM24_H_ */
