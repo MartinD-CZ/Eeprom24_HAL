@@ -30,15 +30,15 @@ public:
 	static constexpr uint8_t DEFAULT_ADDRESS = 0b1010000;
 
 protected:
-	bool writeByte_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t data);
-	bool writeByte_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t data);
-	uint8_t readByte_internal(uint8_t devAddress, uint16_t byteAddress);
-	uint8_t readByte_internal(uint8_t devAddress, uint8_t byteAddress);
+	bool writeByte_internal16(uint8_t devAddress, uint16_t byteAddress, uint8_t data);
+	bool writeByte_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t data);
+	uint8_t readByte_internal16(uint8_t devAddress, uint16_t byteAddress);
+	uint8_t readByte_internal8(uint8_t devAddress, uint8_t byteAddress);
 
-	bool writePage_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length);
-	bool writePage_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length);
-	bool readPage_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length);
-	bool readPage_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length);
+	bool writePage_internal16(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length);
+	bool writePage_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length);
+	bool readPage_internal16(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length);
+	bool readPage_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length);
 
 	I2C_HandleTypeDef* const m_i2c;
 	const uint8_t m_i2c_address;
@@ -56,28 +56,28 @@ public:
 	Eeprom24_512(I2C_HandleTypeDef* i2c, uint8_t address = DEFAULT_ADDRESS): Eeprom24(i2c, address, 65535, 128) {};
 	Eeprom24_512(I2C_HandleTypeDef* i2c, bool A0, bool A1, bool A2): Eeprom24(i2c, DEFAULT_ADDRESS | (A0) | (A1 << 1) | (A2 << 2), 65535, 128) {};
 
-	bool writeByte(uint16_t address, uint8_t data) {return writeByte_internal(m_i2c_address, address, data);};
-	uint8_t readByte(uint16_t address) {return readByte_internal(m_i2c_address, address);};
+	bool writeByte(uint16_t address, uint8_t data) {return writeByte_internal16(m_i2c_address, address, data);};
+	uint8_t readByte(uint16_t address) {return readByte_internal16(m_i2c_address, address);};
 
-	bool writePage(uint16_t address, uint8_t* data, uint16_t length) {return writePage_internal(m_i2c_address, address, data, length);};
-	bool readPage(uint16_t address, uint8_t* data, uint16_t length) {return readPage_internal(m_i2c_address, address, data, length);};
+	bool writePage(uint16_t address, uint8_t* data, uint16_t length) {return writePage_internal16(m_i2c_address, address, data, length);};
+	bool readPage(uint16_t address, uint8_t* data, uint16_t length) {return readPage_internal16(m_i2c_address, address, data, length);};
 };
 
 
 /** 24x08 memories; size = 1 kB; page size = 16 B.
  *
  */
-class Eeprom24_512: public Eeprom24
+class Eeprom24_08: public Eeprom24
 {
 public:
-	Eeprom24_512(I2C_HandleTypeDef* i2c, uint8_t address = DEFAULT_ADDRESS): Eeprom24(i2c, address, 1023, 16) {};
-	Eeprom24_512(I2C_HandleTypeDef* i2c, bool A0, bool A1, bool A2): Eeprom24(i2c, DEFAULT_ADDRESS | (A0) | (A1 << 1) | (A2 << 2), 1023, 16) {};
+	Eeprom24_08(I2C_HandleTypeDef* i2c, uint8_t address = DEFAULT_ADDRESS): Eeprom24(i2c, address, 1023, 16) {};
+	Eeprom24_08(I2C_HandleTypeDef* i2c, bool A2): Eeprom24(i2c, DEFAULT_ADDRESS | (A2 << 2), 1023, 16) {};
 
-	bool writeByte(uint16_t address, uint8_t data) {return writeByte_internal(m_i2c_address, address, data);};
-	uint8_t readByte(uint16_t address) {return readByte_internal(m_i2c_address, address);};
+	bool writeByte(uint16_t address, uint8_t data) {return writeByte_internal8(m_i2c_address | ((address >> 8) & 0b11), address, data);};
+	uint8_t readByte(uint16_t address) {return readByte_internal8(m_i2c_address | ((address >> 8) & 0b11), address);};
 
-	bool writePage(uint16_t address, uint8_t* data, uint16_t length) {return writePage_internal(m_i2c_address, address, data, length);};
-	bool readPage(uint16_t address, uint8_t* data, uint16_t length) {return readPage_internal(m_i2c_address, address, data, length);};
+	bool writePage(uint16_t address, uint8_t* data, uint16_t length) {return writePage_internal8(m_i2c_address | ((address >> 8) & 0b11), address, data, length);};
+	bool readPage(uint16_t address, uint8_t* data, uint16_t length) {return readPage_internal8(m_i2c_address | ((address >> 8) & 0b11), address, data, length);};
 };
 
 

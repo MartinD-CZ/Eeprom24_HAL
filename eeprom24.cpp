@@ -59,7 +59,7 @@ bool Eeprom24::waitForReady(uint32_t timeout) const
  *
  * @note After writing, it takes the memory some time to save the data; poll using waitForReady.
  */
-bool Eeprom24::writeByte_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t data)
+bool Eeprom24::writeByte_internal16(uint8_t devAddress, uint16_t byteAddress, uint8_t data)
 {
 	uint8_t tmp[3] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF), data};
 	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
@@ -76,7 +76,7 @@ bool Eeprom24::writeByte_internal(uint8_t devAddress, uint16_t byteAddress, uint
  *
  * @note After writing, it takes the memory some time to save the data; poll using waitForReady.
  */
-bool Eeprom24::writeByte_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t data)
+bool Eeprom24::writeByte_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t data)
 {
 	uint8_t tmp[3] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF), data};
 	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
@@ -90,7 +90,7 @@ bool Eeprom24::writeByte_internal(uint8_t devAddress, uint8_t byteAddress, uint8
  * @param byteAddress	The address of the byte to read.
  * @return				Value of the read byte.
  */
-uint8_t Eeprom24::readByte_internal(uint8_t devAddress, uint16_t byteAddress)
+uint8_t Eeprom24::readByte_internal16(uint8_t devAddress, uint16_t byteAddress)
 {
 	uint8_t tmp[2] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF)};
 	HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, sizeof(tmp), 25);
@@ -107,7 +107,7 @@ uint8_t Eeprom24::readByte_internal(uint8_t devAddress, uint16_t byteAddress)
  * @param byteAddress	The address of the byte to read.
  * @return				Value of the read byte.
  */
-uint8_t Eeprom24::readByte_internal(uint8_t devAddress, uint8_t byteAddress)
+uint8_t Eeprom24::readByte_internal8(uint8_t devAddress, uint8_t byteAddress)
 {
 	HAL_I2C_Master_Transmit(m_i2c, devAddress, &byteAddress, 1, 25);
 
@@ -128,7 +128,7 @@ uint8_t Eeprom24::readByte_internal(uint8_t devAddress, uint8_t byteAddress)
  *
  * @note After writing, it takes the memory some time to save the data; poll using waitForReady.
  */
-bool Eeprom24::writePage_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length)
+bool Eeprom24::writePage_internal16(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length)
 {
 	uint8_t tmp[m_pageSizeInBytes + 2];
 	tmp[0] = byteAddress >> 8;
@@ -153,7 +153,7 @@ bool Eeprom24::writePage_internal(uint8_t devAddress, uint16_t byteAddress, uint
  *
  * @note After writing, it takes the memory some time to save the data; poll using waitForReady.
  */
-bool Eeprom24::writePage_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length)
+bool Eeprom24::writePage_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length)
 {
 	uint8_t tmp[m_pageSizeInBytes + 1];
 	tmp[0] = byteAddress;
@@ -174,7 +174,7 @@ bool Eeprom24::writePage_internal(uint8_t devAddress, uint8_t byteAddress, uint8
  * @param length		How many bytes should be read, not limited by page boundaries.
  * @return 				True if write operation was successful.
  */
-bool Eeprom24::readPage_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length)
+bool Eeprom24::readPage_internal16(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length)
 {
 	uint8_t tmp[2] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF)};
 	HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
@@ -192,7 +192,7 @@ bool Eeprom24::readPage_internal(uint8_t devAddress, uint16_t byteAddress, uint8
  * @param length		How many bytes should be read, not limited by page boundaries.
  * @return 				True if write operation was successful.
  */
-bool Eeprom24::readPage_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length)
+bool Eeprom24::readPage_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length)
 {
 	HAL_I2C_Master_Transmit(m_i2c, devAddress, &byteAddress, sizeof(byteAddress), EEPROM24_I2C_TIMEOUT);
 
