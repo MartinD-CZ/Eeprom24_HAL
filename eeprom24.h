@@ -46,8 +46,8 @@ protected:
 	const uint16_t m_pageSizeInBytes;
 };
 
-/**
- * @brief Definiton for the 24x512 memories. Size: 512 kb = 64 kB. Page size: 128 B.
+
+/** 24x512 memories; size = 64 kB; page size = 128 B.
  *
  */
 class Eeprom24_512: public Eeprom24

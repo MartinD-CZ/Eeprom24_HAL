@@ -8,10 +8,9 @@
 #include "custom_assert.h"
 
 
-/** Initialization function, should be called first
+/** Initialization function, doesn't have to be called, only checks connectivity with the EEPROM
  *
- * @param i2c	Pointer to preinitialized i2c handle. Max speed depends on the particular chip.
- * @return		True if connection with the EEPROM was established.
+ * @return				True if connection with the EEPROM was established.
  */
 bool Eeprom24::init()
 {
@@ -23,7 +22,7 @@ bool Eeprom24::init()
 /** After a write operation, the memory enters an internal lock-up state, during which it doesn't respond on the I2C bus.
  *  This function is used to check whether the memory is ready for new commands. Read operations don't start lock-up state.
  *
- * @return		True is memory is ready to accept new commands, false otherwise
+ * @return				True is memory is ready to accept new commands.
  */
 bool Eeprom24::isReady(void) const
 {
@@ -31,9 +30,10 @@ bool Eeprom24::isReady(void) const
 }
 
 
-/** Polling function with timeout (25 ms by default), used to wait until EEPROM is ready to accpet new commands
+/** Polling function with timeout, used to wait until EEPROM is ready to accept new commands after write
  *
- * @return		True if device became ready before timeout.
+ * @param timeout		Timeout in ms.
+ * @return				True if device became ready before timeout.
  */
 bool Eeprom24::waitForReady(uint32_t timeout) const
 {
@@ -49,15 +49,15 @@ bool Eeprom24::waitForReady(uint32_t timeout) const
 	return true;
 }
 
-/**
- * @brief Writes a byte to the EEPROM. Version for larger memories with 2 byte addresses.
+
+/** Writes a byte to the EEPROM. Version for larger memories with 2 byte addresses.
  *
- * @param devAddress	EEPROM's I2C address, managed internally
- * @param byteAddress	The address of the byte to write
- * @param data			Byte to write
- * @return 				True if write operation was successful, false otherwise
+ * @param devAddress	EEPROM's I2C address, managed internally.
+ * @param byteAddress	The address of the byte to write.
+ * @param data			Byte to write.
+ * @return 				True if write operation was successful.
  *
- * @note After writing, it takes the memory some time to save the data; poll using waitForReady
+ * @note After writing, it takes the memory some time to save the data; poll using waitForReady.
  */
 bool Eeprom24::writeByte_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t data)
 {
@@ -66,15 +66,15 @@ bool Eeprom24::writeByte_internal(uint8_t devAddress, uint16_t byteAddress, uint
 	return (retval == HAL_OK);
 }
 
-/**
- * @brief Writes a byte to the EEPROM. Version for smaller memories with single byte addresses.
+
+/** Writes a byte to the EEPROM. Version for smaller memories with single byte addresses.
  *
- * @param devAddress	EEPROM's I2C address, managed internally
- * @param byteAddress	The address of the byte to write
- * @param data			Byte to write
- * @return 				True if write operation was successful, false otherwise
+ * @param devAddress	EEPROM's I2C address, managed internally.
+ * @param byteAddress	The address of the byte to write.
+ * @param data			Byte to write.
+ * @return 				True if write operation was successful.
  *
- * @note After writing, it takes the memory some time to save the data; poll using waitForReady
+ * @note After writing, it takes the memory some time to save the data; poll using waitForReady.
  */
 bool Eeprom24::writeByte_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t data)
 {
@@ -83,12 +83,12 @@ bool Eeprom24::writeByte_internal(uint8_t devAddress, uint8_t byteAddress, uint8
 	return (retval == HAL_OK);
 }
 
-/**
- * @brief Reads a byte from the EEPROM. Version for larger memories with 2 byte addresses.
+
+/** Reads a byte from the EEPROM. Version for larger memories with 2 byte addresses.
  *
- * @param devAddress	EEPROM's I2C address, managed internally
- * @param byteAddress	The address of the byte to read
- * @return				Value of the read byte
+ * @param devAddress	EEPROM's I2C address, managed internally.
+ * @param byteAddress	The address of the byte to read.
+ * @return				Value of the read byte.
  */
 uint8_t Eeprom24::readByte_internal(uint8_t devAddress, uint16_t byteAddress)
 {
@@ -100,12 +100,12 @@ uint8_t Eeprom24::readByte_internal(uint8_t devAddress, uint16_t byteAddress)
 	return retval;
 }
 
-/**
- * @brief Reads a byte from the EEPROM. Version for smaller memories with single byte addresses.
+
+/** Reads a byte from the EEPROM. Version for smaller memories with single byte addresses.
  *
- * @param devAddress	EEPROM's I2C address, managed internally
- * @param byteAddress	The address of the byte to read
- * @return				Value of the read byte
+ * @param devAddress	EEPROM's I2C address, managed internally.
+ * @param byteAddress	The address of the byte to read.
+ * @return				Value of the read byte.
  */
 uint8_t Eeprom24::readByte_internal(uint8_t devAddress, uint8_t byteAddress)
 {
@@ -116,17 +116,17 @@ uint8_t Eeprom24::readByte_internal(uint8_t devAddress, uint8_t byteAddress)
 	return retval;
 }
 
-/**
- * @brief Writes up to a page-size of bytes to the memory. Version for larger memories with 2 byte addresses.
+
+/** Writes up to a page-size of bytes to the memory. Version for larger memories with 2 byte addresses.
  *
- * @param devAddress	EEPROM's I2C address, managed internally
- * @param byteAddress	The address of the byte the write should start at
- * @param data			Pointer to an array with data to be written
+ * @param devAddress	EEPROM's I2C address, managed internally.
+ * @param byteAddress	The address of the byte the write should start at.
+ * @param data			Pointer to an array with data to be written.
  * @param length		How many bytes to write. If page size is exceeded, a roll-over happens and the write starts from
- * 						the page beginning
- * @return 				True if write operation was successful, false otherwise
+ * 						the page beginning.
+ * @return 				True if write operation was successful.
  *
- * @note After writing, it takes the memory some time to save the data; poll using waitForReady
+ * @note After writing, it takes the memory some time to save the data; poll using waitForReady.
  */
 bool Eeprom24::writePage_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length)
 {
@@ -141,17 +141,17 @@ bool Eeprom24::writePage_internal(uint8_t devAddress, uint16_t byteAddress, uint
 	return (retval == HAL_OK);
 }
 
-/**
- * @brief Writes up to a page-size of bytes to the memory. Version for smaller memories with single byte addresses.
+
+/** Writes up to a page-size of bytes to the memory. Version for smaller memories with single byte addresses.
  *
- * @param devAddress	EEPROM's I2C address, managed internally
- * @param byteAddress	The address of the byte the write should start at
- * @param data			Pointer to an array with data to be written
+ * @param devAddress	EEPROM's I2C address, managed internally.
+ * @param byteAddress	The address of the byte the write should start at.
+ * @param data			Pointer to an array with data to be written.
  * @param length		How many bytes to write. If page size is exceeded, a roll-over happens and the write starts from
- * 						the page beginning
- * @return 				True if write operation was successful, false otherwise
+ * 						the page beginning.
+ * @return 				True if write operation was successful.
  *
- * @note After writing, it takes the memory some time to save the data; poll using waitForReady
+ * @note After writing, it takes the memory some time to save the data; poll using waitForReady.
  */
 bool Eeprom24::writePage_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length)
 {
@@ -165,14 +165,14 @@ bool Eeprom24::writePage_internal(uint8_t devAddress, uint8_t byteAddress, uint8
 	return (retval == HAL_OK);
 }
 
-/**
- * @brief Reads a number of bytes from the EEPROM. Version for larger memories with 2 byte addresses.
+
+/** Reads a number of bytes from the EEPROM. Version for larger memories with 2 byte addresses.
  *
- * @param devAddress	EEPROM's I2C address, managed internally
- * @param byteAddress	The address of the byte the read should start at
- * @param data			Pointer to an array in which data will be stored
- * @param length		How many bytes should be read, not limited by page boundaries
- * @return 				True if write operation was successful, false otherwise
+ * @param devAddress	EEPROM's I2C address, managed internally.
+ * @param byteAddress	The address of the byte the read should start at.
+ * @param data			Pointer to an array in which data will be stored.
+ * @param length		How many bytes should be read, not limited by page boundaries.
+ * @return 				True if write operation was successful.
  */
 bool Eeprom24::readPage_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length)
 {
@@ -183,14 +183,14 @@ bool Eeprom24::readPage_internal(uint8_t devAddress, uint16_t byteAddress, uint8
 	return (retval == HAL_OK);
 }
 
-/**
- * @brief Reads a number of bytes from the EEPROM. Version for smaller memories with single byte addresses.
+
+/** Reads a number of bytes from the EEPROM. Version for smaller memories with single byte addresses.
  *
- * @param devAddress	EEPROM's I2C address, managed internally
- * @param byteAddress	The address of the byte the read should start at
- * @param data			Pointer to an array in which data will be stored
- * @param length		How many bytes should be read, not limited by page boundaries
- * @return 				True if write operation was successful, false otherwise
+ * @param devAddress	EEPROM's I2C address, managed internally.
+ * @param byteAddress	The address of the byte the read should start at.
+ * @param data			Pointer to an array in which data will be stored.
+ * @param length		How many bytes should be read, not limited by page boundaries.
+ * @return 				True if write operation was successful.
  */
 bool Eeprom24::readPage_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length)
 {
