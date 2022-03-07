@@ -13,10 +13,8 @@
  * @param i2c	Pointer to preinitialized i2c handle. Max speed depends on the particular chip.
  * @return		True if connection with the EEPROM was established.
  */
-bool Eeprom24::init(I2C_HandleTypeDef* i2c)
+bool Eeprom24::init()
 {
-	m_i2c = i2c;
-
 	auto retval = HAL_I2C_IsDeviceReady(m_i2c, m_i2c_address, 2, 100);
 	return (retval == HAL_OK);
 }

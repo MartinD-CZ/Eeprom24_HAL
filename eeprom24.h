@@ -16,10 +16,10 @@
 class Eeprom24
 {
 public:
-	Eeprom24(uint8_t address, uint32_t size, uint16_t page):
-		m_i2c_address(address), m_sizeInBytes(size), m_pageSizeInBytes(page) {};
+	Eeprom24(I2C_HandleTypeDef* i2c, uint8_t address, uint32_t size, uint16_t page):
+		m_i2c(i2c), m_i2c_address(address), m_sizeInBytes(size), m_pageSizeInBytes(page) {};
 
-	bool init(I2C_HandleTypeDef* i2c);
+	bool init();
 
 	bool isReady(void) const;
 	bool waitForReady(uint32_t timeout = EEPROM24_I2C_TIMEOUT) const;
@@ -40,8 +40,8 @@ protected:
 	bool readPage_internal(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length);
 	bool readPage_internal(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length);
 
-	I2C_HandleTypeDef* m_i2c;
-	uint8_t m_i2c_address;
+	I2C_HandleTypeDef* const m_i2c;
+	const uint8_t m_i2c_address;
 	const uint32_t m_sizeInBytes;
 	const uint16_t m_pageSizeInBytes;
 };
@@ -53,8 +53,8 @@ protected:
 class Eeprom24_512: public Eeprom24
 {
 public:
-	Eeprom24_512(uint8_t address = DEFAULT_ADDRESS): Eeprom24(address, 65535, 128) {};
-	Eeprom24_512(bool A0, bool A1, bool A2): Eeprom24(DEFAULT_ADDRESS | (A0) | (A1 << 1) | (A2 << 2), 65535, 128) {};
+	Eeprom24_512(I2C_HandleTypeDef* i2c, uint8_t address = DEFAULT_ADDRESS): Eeprom24(i2c, address, 65535, 128) {};
+	Eeprom24_512(I2C_HandleTypeDef* i2c, bool A0, bool A1, bool A2): Eeprom24(i2c, DEFAULT_ADDRESS | (A0) | (A1 << 1) | (A2 << 2), 65535, 128) {};
 
 	bool writeByte(uint16_t address, uint8_t data) {return writeByte_internal(m_i2c_address, address, data);};
 	uint8_t readByte(uint16_t address) {return readByte_internal(m_i2c_address, address);};
