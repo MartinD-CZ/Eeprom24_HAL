@@ -14,7 +14,7 @@
  */
 bool Eeprom24::init()
 {
-	auto retval = HAL_I2C_IsDeviceReady(m_i2c, m_i2c_address, 2, 100);
+	auto retval = HAL_I2C_IsDeviceReady(m_i2c, m_i2c_address << 1, 2, 100);
 	return (retval == HAL_OK);
 }
 
@@ -26,7 +26,7 @@ bool Eeprom24::init()
  */
 bool Eeprom24::isReady(void) const
 {
-	return (HAL_I2C_IsDeviceReady(m_i2c, m_i2c_address, 1, 100) == HAL_OK);
+	return (HAL_I2C_IsDeviceReady(m_i2c, m_i2c_address << 1, 1, 100) == HAL_OK);
 }
 
 
@@ -62,7 +62,7 @@ bool Eeprom24::waitForReady(uint32_t timeout) const
 bool Eeprom24::writeByte_internal16(uint8_t devAddress, uint16_t byteAddress, uint8_t data)
 {
 	uint8_t tmp[3] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF), data};
-	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
+	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
 	return (retval == HAL_OK);
 }
 
@@ -79,7 +79,7 @@ bool Eeprom24::writeByte_internal16(uint8_t devAddress, uint16_t byteAddress, ui
 bool Eeprom24::writeByte_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t data)
 {
 	uint8_t tmp[3] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF), data};
-	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
+	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
 	return (retval == HAL_OK);
 }
 
@@ -93,10 +93,10 @@ bool Eeprom24::writeByte_internal8(uint8_t devAddress, uint8_t byteAddress, uint
 uint8_t Eeprom24::readByte_internal16(uint8_t devAddress, uint16_t byteAddress)
 {
 	uint8_t tmp[2] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF)};
-	HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, sizeof(tmp), 25);
+	HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, tmp, sizeof(tmp), 25);
 
 	uint8_t retval = 0;
-	HAL_I2C_Master_Receive(m_i2c, devAddress, &retval, 1, EEPROM24_I2C_TIMEOUT);
+	HAL_I2C_Master_Receive(m_i2c, devAddress << 1, &retval, 1, EEPROM24_I2C_TIMEOUT);
 	return retval;
 }
 
@@ -109,10 +109,10 @@ uint8_t Eeprom24::readByte_internal16(uint8_t devAddress, uint16_t byteAddress)
  */
 uint8_t Eeprom24::readByte_internal8(uint8_t devAddress, uint8_t byteAddress)
 {
-	HAL_I2C_Master_Transmit(m_i2c, devAddress, &byteAddress, 1, 25);
+	HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, &byteAddress, 1, 25);
 
 	uint8_t retval = 0;
-	HAL_I2C_Master_Receive(m_i2c, devAddress, &retval, 1, EEPROM24_I2C_TIMEOUT);
+	HAL_I2C_Master_Receive(m_i2c, devAddress << 1, &retval, 1, EEPROM24_I2C_TIMEOUT);
 	return retval;
 }
 
@@ -137,7 +137,7 @@ bool Eeprom24::writePage_internal16(uint8_t devAddress, uint16_t byteAddress, ui
 	for (uint16_t i = 0; i < length; i++)
 		tmp[i + 2] = data[i];
 
-	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, length + 2, EEPROM24_I2C_TIMEOUT);
+	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, tmp, length + 2, EEPROM24_I2C_TIMEOUT);
 	return (retval == HAL_OK);
 }
 
@@ -161,7 +161,7 @@ bool Eeprom24::writePage_internal8(uint8_t devAddress, uint8_t byteAddress, uint
 	for (uint16_t i = 0; i < length; i++)
 		tmp[i + 1] = data[i];
 
-	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, length + 1, EEPROM24_I2C_TIMEOUT);
+	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, tmp, length + 1, EEPROM24_I2C_TIMEOUT);
 	return (retval == HAL_OK);
 }
 
@@ -177,9 +177,9 @@ bool Eeprom24::writePage_internal8(uint8_t devAddress, uint8_t byteAddress, uint
 bool Eeprom24::readPage_internal16(uint8_t devAddress, uint16_t byteAddress, uint8_t* data, uint16_t length)
 {
 	uint8_t tmp[2] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF)};
-	HAL_I2C_Master_Transmit(m_i2c, devAddress, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
 
-	auto retval = HAL_I2C_Master_Receive(m_i2c, devAddress, data, length, EEPROM24_I2C_TIMEOUT);
+	auto retval = HAL_I2C_Master_Receive(m_i2c, devAddress << 1, data, length, EEPROM24_I2C_TIMEOUT);
 	return (retval == HAL_OK);
 }
 
@@ -194,9 +194,9 @@ bool Eeprom24::readPage_internal16(uint8_t devAddress, uint16_t byteAddress, uin
  */
 bool Eeprom24::readPage_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t* data, uint16_t length)
 {
-	HAL_I2C_Master_Transmit(m_i2c, devAddress, &byteAddress, sizeof(byteAddress), EEPROM24_I2C_TIMEOUT);
+	HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, &byteAddress, sizeof(byteAddress), EEPROM24_I2C_TIMEOUT);
 
-	auto retval = HAL_I2C_Master_Receive(m_i2c, devAddress, data, length, EEPROM24_I2C_TIMEOUT);
+	auto retval = HAL_I2C_Master_Receive(m_i2c, devAddress << 1, data, length, EEPROM24_I2C_TIMEOUT);
 	return (retval == HAL_OK);
 }
 
