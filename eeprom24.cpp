@@ -78,7 +78,7 @@ bool Eeprom24::writeByte_internal16(uint8_t devAddress, uint16_t byteAddress, ui
  */
 bool Eeprom24::writeByte_internal8(uint8_t devAddress, uint8_t byteAddress, uint8_t data)
 {
-	uint8_t tmp[3] = {(uint8_t)(byteAddress >> 8), (uint8_t)(byteAddress & 0xFF), data};
+	uint8_t tmp[2] = {byteAddress, data};
 	auto retval = HAL_I2C_Master_Transmit(m_i2c, devAddress << 1, tmp, sizeof(tmp), EEPROM24_I2C_TIMEOUT);
 	return (retval == HAL_OK);
 }
